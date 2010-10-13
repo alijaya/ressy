@@ -1,0 +1,9 @@
+
+{
+	"name" : "assets",
+	"files" : [ 
+	{
+		"name" : "another",
+		"files" : [ "Data.json", "Texty.txt" ]
+	}, "flixel.mp3", "Forest.png", "PowerUp.wav" ]
+}

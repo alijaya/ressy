@@ -1,0 +1,1 @@
+<movie width="100" framerate="12" height="100"><frame><library><binary import="assets/another/Data.json"/><binary import="assets/another/Texty.txt"/><sound import="assets/flixel.mp3"/><bitmap import="assets/Forest.png"/><sound import="assets/PowerUp.wav"/></library></frame></movie>

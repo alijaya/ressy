@@ -1,0 +1,14 @@
+-main Main
+-swf9 Loddy.swf
+-cp ../
+-lib hxJson2
+
+--next
+
+-main Main
+-swf9 Eddy.swf
+-cp ../
+-lib hxJson2
+-resource assets.swf@swf
+-resource assets.json@json
+-D embed

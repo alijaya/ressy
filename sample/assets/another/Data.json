@@ -1,0 +1,11 @@
+{
+	"author" : "Ali Jaya Meilio",
+	"age" : 16,
+	"male" : true,
+	"anotherDic" :
+	{
+		"test" : "Hello",
+		"testAgain" : "World"
+	},
+	"array" : ["one", "two", "three"]
+}
