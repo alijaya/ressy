@@ -1,0 +1,7 @@
+Okay this library is from manaGearz...
+I think it will be nice to separate this from main engine
+It is a resource management library, so it will handle the resource pain when you build swf from haXe
+
+It feature is:
+1. get your resource with access the folder and file
+2. you can use 2 mode in this library, you can load the resource in runtime, and you can embed the resource in your swf. Changing from a mode to another is so simple, just change few line, and the rest of the code don't need a change.
