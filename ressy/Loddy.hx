@@ -1,7 +1,8 @@
 package ressy;
 import flash.display.Loader;
+import flash.system.ApplicationDomain;
+import flash.system.LoaderContext;
 import flash.events.Event;
-import flash.events.SampleDataEvent;
 import flash.media.Sound;
 import flash.net.URLRequest;
 import flash.net.URLLoader;
@@ -30,6 +31,8 @@ class Loddy
 	var temporaryPath:Array<String>;
 	
 	var count:Int;
+
+	var waiting:Bool;
 	
 	private var complete : Dynamic;
 	
@@ -61,6 +64,7 @@ class Loddy
 	
 	public function load(baseFile:String, complete:Dynamic)
 	{
+		waiting = false;
 		count = 0;
 		jsons = [];
 		temporaryPath = [];
@@ -75,6 +79,8 @@ class Loddy
 		var d = JSON.decode(loaderSet.data);
 		basePath += d.name;
 		loadDir(d.files, "", false);
+		waiting = true;
+		if(count == 0) callComplete();
 	}
 	
 	private function loadDir(a:Array<Dynamic>, curPath:String, temporary:Bool)
@@ -102,7 +108,7 @@ class Loddy
 	private function endLoad()
 	{
 		count--;
-		if(count==0) callComplete();
+		if(waiting && count==0) callComplete();
 	}
 	
 	private function loadFile(path:String, dataPath:String, temporary:Bool)
@@ -115,12 +121,28 @@ class Loddy
 		var req = new URLRequest(path);
 		switch(ext)
 		{
+			case "swf" : loadSwf(path, dataPath);
 			case "jpg", "jpeg", "png", "gif": loadImage(path, dataPath);
 			case "mp3", "wav": loadSound(path, dataPath);
 			case "txt": loadText(path, dataPath);
 			case "json": loadJSON(path, dataPath);
 			default: loadBinary(path, dataPath);
 		}
+	}
+
+	private function loadSwf(path:String, dataPath:String)
+	{
+		var loader:Loader = new Loader();
+		loader.contentLoaderInfo.addEventListener(Event.COMPLETE, callback(onSwfCom, dataPath), false, 0, true);
+		loader.load(new URLRequest(path), new LoaderContext(new ApplicationDomain()));
+	}
+	
+	private function onSwfCom(dataPath:String, e:Event)
+	{
+		//trace("swf");
+		Ressy.instance.setStr(dataPath, e.target.content);
+		endLoad();
+		//trace("end "+dataPath+" "+count);
 	}
 	
 	private function loadImage(path:String, dataPath:String)

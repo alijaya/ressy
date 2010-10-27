@@ -1,5 +1,10 @@
 package ressy;
 
+import flash.display.DisplayObject;
+import flash.display.Bitmap;
+import flash.utils.ByteArray;
+import flash.text.Font;
+
 class Ressy 
 {
 	private static var _instance : Ressy;
@@ -141,4 +146,22 @@ class Ressy
 		}
 		return s;
 	}
+
+	public function registerFont(d:DisplayObject, c:String)
+	{
+		Font.registerFont(d.loaderInfo.applicationDomain.getDefinition(c));
+	}
+
+	public function cloneBitmap(b:Bitmap) : Bitmap
+	{
+		return new Bitmap(b.bitmapData, b.pixelSnapping, b.smoothing);
+	}
+	
+	public function cloneByteArray(b:ByteArray) : ByteArray
+	{
+		var nb = new ByteArray();
+		nb.writeBytes(b);
+		return nb;
+	}
+	
 }

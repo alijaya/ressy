@@ -52,9 +52,8 @@ class Main
 		xml.set("width","100");
 		xml.set("height","100");
 		xml.set("framerate","12");
-		/*var back = Xml.createElement("background");
-		back.set("color", "#ffffff");
-		xml.addChild(back);*/
+		xml.set("version","9");
+		
 		var frame = Xml.createElement("frame");
 		xml.addChild(frame);
 		lib = Xml.createElement("library");
@@ -76,6 +75,10 @@ class Main
 		
 		Sys.setCwd(basePath);
 		Sys.command("swfmill", ["simple", xmlPath, swfPath]);
+
+		// remove xml file
+
+		Sys.command("rm", [xmlPath]);
 		
 		// make better swf
 		
@@ -103,9 +106,9 @@ class Main
 			cn = names[n];
 			sc = scs[n];
 			symbols.push({cid:id, className:cn});
-			var cl = context.beginClass(cn, true);
+			var cl = context.beginClass(cn);
 			cl.superclass = context.type(sc);
-			context.endClass(true);
+			context.endClass();
 		}
 		
 		s.tags.insert(s.tags.length-1, TSymbolClass(symbols));
@@ -122,10 +125,10 @@ class Main
 		o.flush();
 		o.close();
 		
-		for(n in s.tags)
+		/*for(n in s.tags)
 		{
 			trace(Tools.dumpTag(n,0));
-		}
+		}*/
 	}
 	
 	static function readDir(p:String) : Dynamic

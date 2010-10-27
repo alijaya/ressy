@@ -2,6 +2,7 @@ package ressy;
 import flash.events.Event;
 import flash.system.ApplicationDomain;
 import flash.display.Loader;
+import flash.system.LoaderContext;
 import flash.utils.ByteArray;
 
 import haxe.Resource;
@@ -28,6 +29,9 @@ class Eddy
 	var appDom:ApplicationDomain;
 	var fileList:Dynamic;
 	
+	var count:Int;
+	var waiting:Bool;
+	
 	public function new()
 	{
 		
@@ -35,12 +39,14 @@ class Eddy
 	
 	public function load(swfFileName:String, fileListName:String, complete:Dynamic)
 	{
+		waiting = false;
+		count = 0;
 		jsons = [];
 		temporaryPath = [];
 		this.complete = complete;
 		fileList = JSON.decode(Resource.getString(fileListName));
 		var loader = new Loader();
-		loader.loadBytes(Resource.getBytes(swfFileName).getData());
+		loader.loadBytes(Resource.getBytes(swfFileName).getData(), new LoaderContext(new ApplicationDomain()));
 		loader.contentLoaderInfo.addEventListener(Event.COMPLETE, onComplete, false, 0 , true);
 	}
 	
@@ -48,7 +54,8 @@ class Eddy
 	{
 		appDom = e.target.applicationDomain;
 		loadDir(fileList.files, fileList.name, false);
-		callComplete();
+		waiting = true;
+		if(count == 0) callComplete();
 	}
 	
 	function callComplete()
@@ -102,13 +109,42 @@ class Eddy
 			case "txt":
 				var ba:ByteArray = Type.createInstance(appDom.getDefinition(p),[]);
 				Ressy.instance.setStr(pa, ba.readUTFBytes(ba.length));
+			case "swf":
+				startLoad();
+				var ba:ByteArray = Type.createInstance(appDom.getDefinition(p),[]);
+				loadSwf(ba, pa);
 			case "png","jpg","jpeg":
 				Ressy.instance.setStr(pa, Type.createInstance(appDom.getDefinition(p),[]));
 			default:
 				Ressy.instance.setStr(pa, Type.createInstance(appDom.getDefinition(p),[]));
 		}
 	}
+
+	private function startLoad()
+	{
+		count++;
+	}
 	
+	private function endLoad()
+	{
+		count--;
+		if(waiting && count==0) callComplete();
+	}
+	
+	private function loadSwf(ba:ByteArray, pa:String) : Void
+	{
+		var loader:Loader = new Loader();
+		loader.contentLoaderInfo.addEventListener(Event.COMPLETE, callback(onSwfCom, pa), false, 0, true);
+		loader.loadBytes(ba, new LoaderContext(new ApplicationDomain()));
+	}
+
+	private function onSwfCom(dataPath:String, e:Event)
+	{
+		//trace("swf");
+		Ressy.instance.setStr(dataPath, e.target.content);
+		endLoad();
+		//trace("end "+dataPath+" "+count);
+	}
 	
 	private function checkJSON(json:{path:String, json:Dynamic, finished:Bool})
 	{
