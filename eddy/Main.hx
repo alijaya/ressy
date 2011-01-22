@@ -59,8 +59,13 @@ class Main
 		lib = Xml.createElement("library");
 		frame.addChild(lib);
 		
-		var root = basePath.substr(basePath.lastIndexOf("/"));
-		basePath = basePath.substr(0, basePath.lastIndexOf("/"));
+		var lastIndex : Int = basePath.lastIndexOf("/");
+		if ( lastIndex == -1 ) {
+			lastIndex = basePath.lastIndexOf("\\");
+		}
+		
+		var root = basePath.substr(lastIndex);
+		basePath = basePath.substr(0, lastIndex);
 		readDir(root);
 		
 		xmlPath = Path.withExtension(basePath+root,"xml");
